@@ -1,92 +1,93 @@
-# Lab3-4
+## Lab #3-4 -- "Разработка STL-подобных контейнеров, итераторов и алгоритмов"
+## Часть 1. Разработка контейнерных классов
+Вариант 1
+Разработать шаблонный класс Vector для динамического хранения одномерного массива данных. Данный класс должен обеспечивать хранение данных любого типа _DataType (включая пользовательские) и реализовывать следующие методы:
+
+Конструкторы:
+- Конструктор по умолчанию.
+- Конструктор, принимающий количество элементов (создает вектор с помощью конструкторов по умолчанию для элементов).
+- Конструктор, принимающий количество элементов и значение, инициализирующее элементы вектора.
+- Конструктор, принимающий интервал [beg,end), заданный итераторами.
+- Конструктор, принимающий список инициализации std::initializer_list.
+- Копирующий конструктор.
+- Конструктор переноса.
+- Деструктор.
+
+Функции-операции:
+- Операция присваивания с копированием.
+- Операция присваивания с переносом.
+- Операции индексирования (для чтения и записи), возвращающие ссылку на соответствующий элемент (без проверки выхода за пределы массива).
+
+Методы:
+- at(idx) – возвращает элемент с индексом idx (при выходе за пределы допустимого диапазона генерирует исключение).
+- begin() – возвращает итератор на начало вектора.
+- end() – возвращает итератор на элемент, следующий за последним.
+- pushBack(elem) – добавляет копию аргумента elem в конец вектора. Предоставить обычную версию и версию с переносом.
+- popBack() – удаляет последний элемент.
+- insert(pos,elem) – вставляет копию элемента elem перед позицией итератора pos и возвращает позицию нового элемента. 
+- Предоставить обычную версию и версию с переносом.
+- insert(pos,beg,end) – вставляет копии всех элементов интервала [beg,end) перед позицией итератора pos и возвращает позицию первого нового элемента (или итератор pos, если новых элементов нет).
+- erase(pos) – удаляет элемент в позиции итератора pos и возвращает позицию следующего элемента.
+- reserve(num) – увеличивает емкость (объем зарезервированной памяти).
+- resize(num) – изменяет количество элементов до num (если размер size() увеличивается, новые элементы создаются конструкторами по умолчанию для элементов).
+- empty() – возвращает результат проверки того, что контейнер пуст.
+- size() – возвращает размер вектора.
+- capacity() – возвращает количество элементов, максимально возможное без повторного выделения памяти.
+- clear() – удаляет все элементы вектора.
+
+## Основные требования для класса Vector
+1) Длина вектора должна динамически изменяться каждый раз, когда фактический размер вектора, возвращаемый методом size(), превышает размер зарезервированной памяти capacity(). В этом 
+случае необходимо вновь выделить память в размере 2 * capacity() 
+(см. рис. 2). 
+
+![image](https://github.com/user-attachments/assets/9159c0a4-d14c-4487-8402-26478daed7f6)
 
 
+2) Предусмотреть генерацию и обработку возможных исключительных 
+ситуаций.
 
-## Getting started
+## Часть 2. Разработка итераторов
+Вариант 1
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Разработать шаблонный класс итератора VectorIterator, предназначенный для обхода элементов контейнера Vector. Данный класс является оберткой для обычного указателя. VectorIterator должен иметь методы, перечисленные ниже:
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Конструкторы:
 
-## Add your files
+- Конструктор, принимающий ссылку на контейнер Vector и указатель на текущий элемент или индекс текущего элемента.
+- Копирующий конструктор.
+- Деструктор.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+Функции-операции:
 
-```
-cd existing_repo
-git remote add origin https://virtual.fn11.bmstu.ru/student-gitlab/DNikonov/lab3-4.git
-git branch -M main
-git push -uf origin main
-```
+- ++, -- (префиксные и постфиксные).
+- * (разыменование).
+- = (присваивание).
+- +, - (сложение и вычитание с целым числом).
+- ==, !=, <, <=, >, >= (сравнение итераторов).
+- +=, -= (перемещение итератора на n элементов вперед и назад соответственно)
+- -> (оператор доступа).
+- [] (обеспечивает доступ к элементу с индексом n).
+- Операция приведения типа.
+  
+## Основные требования для класса VectorIterator
+Внутри класса Vector должно быть public-переименование:
 
-## Integrate with your tools
+- using iterator = VectorIterator;
+- Тип iterator должен использоваться для доступа к элементам контейнера через итераторы совместно с функциями begin() и end(), например:
+  Vector<int>::iterator iter = vec.begin();
+- Предусмотреть обработку возможных исключительных ситуаций.
 
-- [ ] [Set up project integrations](https://virtual.fn11.bmstu.ru/student-gitlab/DNikonov/lab3-4/-/settings/integrations)
+## Часть 3. Разработка алгоритмов
+В отдельном файле Algorithm.h разработать следующие алгоритмы на базе шаблонных функций:
+- Алгоритм findIf(beg,end,pred) для поиска по диапазону [beg,end) произвольного контейнера при заданном условии. Возвращает итератор на найденный элемент или итератор на элемент, следующий за последним, в противном случае.
+- Алгоритм minElement(beg,end) для определения минимального элемента в диапазоне [beg,end) произвольного контейнера. Возвращает итератор на найденный элемент или итератор на элемент, следующий за последним, в противном случае.
+- Алгоритм maxElement(beg,end) для определения максимального элемента в произвольном контейнере. Возвращает итератор на найденный элемент или итератор на элемент, следующий за последним, в противном случае.
+- Алгоритм forEach(beg,end,op) для выполнения произвольной операции над элементами диапазона [beg,end) произвольного контейнера. Ничего не возвращает.
+- Алгоритм сортировки Sort(beg,end)  заданного диапазона [beg,end) произвольного контейнера (метод сортировки выбрать самостоятельно). Ничего не возвращает.
+- Алгоритм copyIf(sourceBeg, sourceEnd, destBeg, pred) для копирования элементов диапазона [sourceBeg,sourceEnd) произвольного контейнера-источника в контейнер-приемник, начиная с позиции итератора destBeg, удовлетворяющих предикату pred.
+## Основные требования по алгоритмам:
+Алгоритмы должны быть построены таким образом, чтобы они взаимодействовали с контейнерами только посредством итераторов. 
 
-## Collaborate with your team
+Передача контейнеров в алгоритмы не допускается.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Логические условия ряда алгоритмов (например, условие отбора нужного элемента при поиске, копировании и т.д.) должны быть реализованы в виде предикатов (на базе функторов или лямбда-функций).
